@@ -2,173 +2,481 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Planejamento de Cidades RS — Underground Representações</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Planejamento de Cidades — Underground Representações</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
 <style>
-:root {
-  --primary:#2F5496; --primary-light:#4472C4; --bg:#F4F6FA; --card:#FFFFFF;
-  --border:#E3E7EE; --text:#1F2937; --muted:#6B7280;
-  --green:#1E8449; --green-bg:#E8F5E9; --red:#C0392B; --red-bg:#FDEDEC;
-  --orange:#B9770E; --orange-bg:#FEF5E7; --gray-bg:#EEF0F3;
-}
-* { box-sizing:border-box; }
-html { scroll-behavior:smooth; }
-body { font-family:Arial,Helvetica,sans-serif; background:var(--bg); color:var(--text); margin:0; }
-header { background:var(--primary); color:#fff; padding:22px 32px; }
-header h1 { margin:0; font-size:21px; letter-spacing:.02em; }
-header p { margin:6px 0 0; opacity:.85; font-size:13px; }
-nav.anchor-nav { display:flex; gap:2px; background:var(--primary-light); padding:0 24px;
-  overflow-x:auto; position:sticky; top:0; z-index:10; }
-nav.anchor-nav a { color:#fff; text-decoration:none; padding:12px 22px; font-size:14px;
-  opacity:.85; white-space:nowrap; border-bottom:3px solid transparent; }
-nav.anchor-nav a:hover { opacity:1; border-bottom-color:rgba(255,255,255,.5); }
-main { padding:24px 32px 48px; max-width:1240px; margin:0 auto; }
-section { scroll-margin-top:54px; padding-top:6px; }
-.section-divider { border:none; border-top:1px solid var(--border); margin:36px 0; }
-.section-title { font-size:16px; font-weight:bold; color:var(--primary); margin:28px 0 4px; }
-.section-title:first-child { margin-top:0; }
-.section-note { font-size:12.5px; color:var(--muted); margin-bottom:14px; max-width:900px; }
-.kpi-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(165px,1fr)); gap:14px; margin-bottom:28px; }
-.kpi-card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px 18px; }
-.kpi-card .value { font-size:26px; font-weight:bold; color:var(--primary); line-height:1.1; }
-.kpi-card .label { font-size:13px; font-weight:bold; margin-top:6px; }
-.kpi-card .desc { font-size:11px; color:var(--muted); margin-top:2px; }
-.kpi-card.highlight { background:var(--primary); }
-.kpi-card.highlight .value, .kpi-card.highlight .label { color:#fff; }
-.kpi-card.highlight .desc { color:rgba(255,255,255,.8); }
-.table-wrap { overflow-x:auto; border-radius:10px; border:1px solid var(--border); }
-table { width:100%; border-collapse:collapse; background:var(--card); font-size:13px; }
-th, td { padding:9px 11px; border-bottom:1px solid var(--border); text-align:left; vertical-align:top; }
-th { background:var(--primary); color:#fff; font-size:11.5px; text-transform:uppercase;
-  letter-spacing:.04em; white-space:nowrap; }
-tbody tr:nth-child(even) td { background:#FAFBFD; }
-tr.total-row td { background:var(--primary)!important; color:#fff; font-weight:bold; border-bottom:none; }
-.num { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
-.clients { color:var(--muted); font-size:12px; max-width:380px; }
-.action { color:var(--text); font-size:12.5px; max-width:280px; }
-.just { color:var(--muted); font-size:12.5px; max-width:420px; }
-.badge { display:inline-block; padding:3px 10px; border-radius:12px; font-size:11px; font-weight:bold; white-space:nowrap; }
-.badge-ativa { background:var(--green-bg); color:var(--green); }
-.badge-dormente { background:var(--gray-bg); color:var(--muted); }
-.badge-alto { background:var(--red-bg); color:var(--red); }
-.badge-medio { background:var(--orange-bg); color:var(--orange); }
-.badge-baixo { background:#EAF2FB; color:var(--primary); }
-.pos { color:var(--green); }
-.neg { color:var(--red); }
-.neu { color:var(--muted); }
-input.search { display:block; padding:9px 14px; border:1px solid var(--border); border-radius:8px;
-  width:100%; max-width:320px; margin-bottom:14px; font-size:13px; font-family:inherit; }
-.flex-tables { display:flex; gap:20px; flex-wrap:wrap; align-items:flex-start; }
-.flex-tables > .table-wrap { flex:1; min-width:320px; }
-footer { text-align:center; padding:22px; font-size:11.5px; color:var(--muted); }
-@media (max-width:700px) {
-  main { padding:16px; }
-  header { padding:18px 16px; }
-  nav.anchor-nav { padding:0 12px; }
-}
-@media print {
-  nav.anchor-nav, input.search { display:none; }
-  body { background:#fff; }
-  section { scroll-margin-top:0; }
-  .table-wrap { border:none; }
-  tr { break-inside:avoid; }
-}
+:root{color-scheme:light}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#0f1117;color:#e2e8f0;min-height:100vh}
+
+header{background:linear-gradient(135deg,#1a1f2e,#16213e);border-bottom:1px solid #2d3748;padding:18px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-icon{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,#43e97b,#38f9d7);display:flex;align-items:center;justify-content:center;font-size:22px}
+header h1{font-size:1.3rem;font-weight:800;color:#f7fafc}
+header p{font-size:.76rem;color:#718096;margin-top:2px}
+.badge{background:#2d3748;border:1px solid #4a5568;padding:5px 12px;border-radius:20px;font-size:.73rem;color:#a0aec0}
+
+.page{max-width:1480px;margin:0 auto;padding:28px 32px}
+section{margin-bottom:36px}
+section>h2{font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#718096;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+section>h2::before{content:'';display:inline-block;width:3px;height:14px;border-radius:2px;background:linear-gradient(180deg,#43e97b,#38f9d7)}
+
+/* KPI */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px}
+.kpi-card{background:#1a1f2e;border:1px solid #2d3748;border-radius:14px;padding:18px 20px;position:relative;overflow:hidden}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.kpi-card.green::before{background:linear-gradient(90deg,#43e97b,#38f9d7)}
+.kpi-card.orange::before{background:linear-gradient(90deg,#fa709a,#fee140)}
+.kpi-card.gray::before{background:linear-gradient(90deg,#718096,#4a5568)}
+.kpi-card.blue::before{background:linear-gradient(90deg,#667eea,#764ba2)}
+.kpi-card.teal::before{background:linear-gradient(90deg,#4facfe,#00f2fe)}
+.kpi-label{font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#718096}
+.kpi-value{font-size:2rem;font-weight:800;color:#f7fafc;margin:6px 0 2px;line-height:1}
+.kpi-sub{font-size:.71rem;color:#718096}
+
+/* CARDS */
+.card{background:#1a1f2e;border:1px solid #2d3748;border-radius:14px;padding:22px}
+.card h3{font-size:.87rem;font-weight:700;color:#e2e8f0;margin-bottom:4px}
+.card .sub{font-size:.72rem;color:#718096;margin-bottom:16px}
+.chart-h300{position:relative;height:300px}
+.chart-h340{position:relative;height:340px}
+.chart-h240{position:relative;height:240px}
+.grid-2{display:grid;grid-template-columns:3fr 2fr;gap:18px}
+@media(max-width:1100px){.grid-2{grid-template-columns:1fr}}
+
+/* STATUS BADGE */
+.status-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:10px;font-size:.7rem;font-weight:700}
+.status-badge.ativa{background:rgba(67,233,123,.15);color:#43e97b;border:1px solid rgba(67,233,123,.3)}
+.status-badge.reativacao{background:rgba(250,112,154,.15);color:#fa709a;border:1px solid rgba(250,112,154,.3)}
+.status-badge.dormant{background:rgba(113,128,150,.15);color:#718096;border:1px solid rgba(113,128,150,.3)}
+
+/* TABLE */
+.table-wrap{background:#1a1f2e;border:1px solid #2d3748;border-radius:14px;overflow:hidden}
+.tbl-controls{padding:14px 16px;border-bottom:1px solid #2d3748;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.tbl-controls input{background:#0f1117;border:1px solid #2d3748;color:#e2e8f0;padding:8px 12px;border-radius:8px;font-size:.82rem;flex:1;min-width:160px;outline:none}
+.tbl-controls input:focus{border-color:#43e97b}
+.filter-btns{display:flex;gap:6px;flex-wrap:wrap}
+.filter-btn{padding:5px 12px;border-radius:8px;border:1px solid #2d3748;background:#2d3748;color:#a0aec0;font-size:.74rem;font-weight:600;cursor:pointer;transition:all .2s}
+.filter-btn.active{background:#43e97b;border-color:#43e97b;color:#000}
+.filter-btn.r-active{background:#fa709a;border-color:#fa709a;color:#fff}
+.filter-btn.d-active{background:#718096;border-color:#718096;color:#fff}
+table{width:100%;border-collapse:collapse;font-size:.79rem}
+th{background:#13182a;padding:10px 12px;text-align:left;font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#718096;cursor:pointer;white-space:nowrap;user-select:none}
+th:hover{color:#e2e8f0}
+td{padding:9px 12px;border-top:1px solid #1e2535;color:#cbd5e0;white-space:nowrap}
+tr:hover td{background:rgba(67,233,123,.04)}
+.num{text-align:right;font-variant-numeric:tabular-nums;font-size:.76rem}
+.pct-badge{display:inline-flex;align-items:center;padding:1px 6px;border-radius:6px;font-size:.68rem;font-weight:700}
+.pct-badge.up{background:rgba(72,187,120,.15);color:#68d391}
+.pct-badge.down{background:rgba(245,101,101,.15);color:#fc8181}
+.tbl-foot{padding:10px 16px;border-top:1px solid #2d3748;font-size:.72rem;color:#718096}
+
+/* REATIVAÇÃO CARDS */
+.reat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.reat-card{background:#1a1f2e;border:1px solid rgba(250,112,154,.3);border-radius:14px;padding:18px}
+.reat-card h4{font-size:.85rem;font-weight:700;color:#fa709a;margin-bottom:4px}
+.reat-card .cidade{font-size:.72rem;color:#718096;margin-bottom:12px}
+.reat-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid #2d3748;font-size:.76rem}
+.reat-row:last-child{border-bottom:none}
+.reat-label{color:#a0aec0}
+.reat-val{color:#e2e8f0;font-weight:600}
+
+/* EXPANSÃO */
+.exp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.exp-card{background:#1a1f2e;border:1px solid rgba(102,126,234,.3);border-left:3px solid;border-radius:14px;padding:16px}
+.exp-card.alto{border-color:#43e97b}
+.exp-card.medio{border-color:#fee140}
+.exp-card.baixo{border-color:#718096}
+.exp-card h4{font-size:.85rem;font-weight:700;color:#e2e8f0;margin-bottom:3px}
+.exp-card .regiao{font-size:.71rem;color:#718096;margin-bottom:10px}
+.exp-tag{display:inline-flex;align-items:center;padding:2px 8px;border-radius:6px;font-size:.68rem;font-weight:700}
+.exp-tag.alto{background:rgba(67,233,123,.15);color:#43e97b}
+.exp-tag.medio{background:rgba(254,225,64,.15);color:#fee140}
+.exp-tag.baixo{background:rgba(113,128,150,.15);color:#718096}
+.exp-detail{font-size:.72rem;color:#718096;margin-top:8px}
+
+.sort-select{background:#0f1117;border:1px solid #2d3748;color:#a0aec0;padding:8px 10px;border-radius:8px;font-size:.78rem;cursor:pointer;outline:none}
 </style>
 </head>
 <body>
+
 <header>
-  <h1>PLANEJAMENTO DE CIDADES — UNDERGROUND REPRESENTAÇÕES</h1>
-  <p>Base: Coleção 118 &nbsp;|&nbsp; Estado: Rio Grande do Sul</p>
+  <div class="logo">
+    <div class="logo-icon">🗺️</div>
+    <div>
+      <h1>Planejamento de Cidades — RS</h1>
+      <p>Underground Representações · Base Coleção 118</p>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <span class="badge" style="background:rgba(67,233,123,.1);border-color:#43e97b;color:#43e97b">● Ativa: comprou na Col. 118</span>
+    <span class="badge" style="background:rgba(250,112,154,.1);border-color:#fa709a;color:#fa709a">● Reativação: comprou 116/117, não 118</span>
+    <span class="badge" style="background:rgba(113,128,150,.1);border-color:#718096;color:#718096">● Dormente: sem histórico</span>
+  </div>
 </header>
-<nav class="anchor-nav">
-  <a href="#resumo">Resumo</a>
-  <a href="#cidades">Cidades (54)</a>
-  <a href="#reativacao">Reativação</a>
-  <a href="#expansao">Expansão (14)</a>
-</nav>
-<main>
 
-  <section id="resumo">
-    <div class="section-title">Indicadores Gerais</div>
-    <div class="kpi-grid"><div class="kpi-card"><div class="value">53</div><div class="label">Cidades Ativas</div><div class="desc">Compraram na Coleção 118</div></div><div class="kpi-card"><div class="value">0</div><div class="label">Cidades p/ Reativar</div><div class="desc">Hist. 116/117 mas sem 118</div></div><div class="kpi-card"><div class="value">1</div><div class="label">Cidades Dormentes</div><div class="desc">Sem histórico de compras</div></div><div class="kpi-card"><div class="value">2</div><div class="label">Clientes p/ Reativar</div><div class="desc">Compraram antes, sem 118</div></div><div class="kpi-card"><div class="value">14</div><div class="label">Oport. Expansão</div><div class="desc">Cidades sem representação</div></div><div class="kpi-card highlight"><div class="value">R$ 4.881.226,87</div><div class="label">Fat. Total Col. 118</div><div class="desc">Todas as marcas (R$)</div></div></div>
+<div class="page">
 
-    <div class="section-title">Top 10 Cidades por Faturamento — Coleção 118</div>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>#</th><th>Cidade</th><th>Status</th><th>Fat. 118 (R$)</th><th>Fat. 117 (R$)</th><th>Δ% 117→118</th></tr></thead>
-        <tbody><tr><td class='num'>1</td><td>Caxias do Sul</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>R$ 690.752,18</td><td class='num'>R$ 781.528,70</td><td class='num neg'>-11.6%</td></tr><tr><td class='num'>2</td><td>Passo Fundo</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>R$ 479.542,11</td><td class='num'>R$ 440.016,34</td><td class='num pos'>+9.0%</td></tr><tr><td class='num'>3</td><td>Cruzeiro do Sul</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>R$ 315.670,82</td><td class='num'>R$ 223.333,92</td><td class='num pos'>+41.3%</td></tr><tr><td class='num'>4</td><td>Erechim</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>R$ 265.644,64</td><td class='num'>R$ 148.040,34</td><td class='num pos'>+79.4%</td></tr><tr><td class='num'>5</td><td>Lajeado</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>R$ 256.256,13</td><td class='num'>R$ 111.186,98</td><td class='num pos'>+130.5%</td></tr><tr><td class='num'>6</td><td>Porto Alegre</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>R$ 233.056,37</td><td class='num'>R$ 205.021,70</td><td class='num pos'>+13.7%</td></tr><tr><td class='num'>7</td><td>Pelotas</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>R$ 215.365,27</td><td class='num'>R$ 178.130,40</td><td class='num pos'>+20.9%</td></tr><tr><td class='num'>8</td><td>Ijuí</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>R$ 183.044,52</td><td class='num'>–</td><td class='num neu'>—</td></tr><tr><td class='num'>9</td><td>Dois Irmãos</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>R$ 137.616,25</td><td class='num'>R$ 2.848,50</td><td class='num pos'>+4731.2%</td></tr><tr><td class='num'>10</td><td>Venâncio Aires</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>R$ 121.475,47</td><td class='num'>R$ 49.939,63</td><td class='num pos'>+143.2%</td></tr></tbody>
-      </table>
+<!-- KPI -->
+<section>
+  <h2>Visão Geral do Território</h2>
+  <div class="kpi-grid" id="kpiGrid"></div>
+</section>
+
+<!-- CHARTS -->
+<section>
+  <h2>Ranking e Distribuição</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h3>Top 15 Cidades — Faturamento Col. 118</h3>
+      <div class="sub">Ordenado por total (todas as marcas)</div>
+      <div class="chart-h340"><canvas id="cRanking"></canvas></div>
     </div>
-  </section>
-
-  <hr class="section-divider">
-
-  <section id="cidades">
-    <div class="section-title">Todas as Cidades Cadastradas (Col. 118)</div>
-    <div class="section-note">54 municípios com clientes cadastrados. Use a busca para filtrar por cidade ou cliente (requer JavaScript habilitado).</div>
-    <input type="text" class="search" id="cidadeSearch" onkeyup="filterCidades()" placeholder="Buscar cidade ou cliente...">
-    <div class="table-wrap">
-      <table id="cidadesTable">
-        <thead><tr><th>#</th><th>Cidade</th><th>Status</th><th>Nº Clientes</th><th>Clientes</th>
-        <th>Fat. 116 (R$)</th><th>Fat. 117 (R$)</th><th>Fat. 118 (R$)</th><th>Δ% 117→118</th></tr></thead>
-        <tbody><tr><td class='num'>1</td><td>Caxias do Sul</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>7</td><td class='clients'>CARNEZELA BOUTIQUE, D HOMEM MODA MASCULINA, FERRARO, INDUSTRIA BRAS, LOJAS FERRARO, LOJAS MAGNABOSCO, OLLEV 52</td><td class='num'>R$ 390.261,45</td><td class='num'>R$ 781.528,70</td><td class='num'>R$ 690.752,18</td><td class='num neg'>-11.6%</td></tr><tr><td class='num'>2</td><td>Passo Fundo</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>2</td><td class='clients'>KAKA, NUVEEM DE AMOR</td><td class='num'>R$ 320.589,65</td><td class='num'>R$ 440.016,34</td><td class='num'>R$ 479.542,11</td><td class='num pos'>+9.0%</td></tr><tr><td class='num'>3</td><td>Cruzeiro do Sul</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>1</td><td class='clients'>DULLIUS</td><td class='num'>R$ 28.901,89</td><td class='num'>R$ 223.333,92</td><td class='num'>R$ 315.670,82</td><td class='num pos'>+41.3%</td></tr><tr><td class='num'>4</td><td>Erechim</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>3</td><td class='clients'>ALLERTON, ANGELICA DACAMPO, LORENCI HOMEM LTDA</td><td class='num'>R$ 112.209,53</td><td class='num'>R$ 148.040,34</td><td class='num'>R$ 265.644,64</td><td class='num pos'>+79.4%</td></tr><tr><td class='num'>5</td><td>Lajeado</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>6</td><td class='clients'>ANDREOLLY, CAMISARIA LAJEADO, DON JUAN LAJEADO, HOLLY STORE HOMEM, ISO &amp; POSTAL, PROFIT COMERCIO CONFEC</td><td class='num'>R$ 138.675,98</td><td class='num'>R$ 111.186,98</td><td class='num'>R$ 256.256,13</td><td class='num pos'>+130.5%</td></tr><tr><td class='num'>6</td><td>Porto Alegre</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>5</td><td class='clients'>ARCADME POA, COMPANY HOMEM, ELEMENTO FOR MEN, LDC, PAULO RICARDO BONA</td><td class='num'>R$ 108.171,75</td><td class='num'>R$ 205.021,70</td><td class='num'>R$ 233.056,37</td><td class='num pos'>+13.7%</td></tr><tr><td class='num'>7</td><td>Pelotas</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>2</td><td class='clients'>ANTONIO AUGUSTO-235, BRASCON COM. DE CONF</td><td class='num'>R$ 147.441,41</td><td class='num'>R$ 178.130,40</td><td class='num'>R$ 215.365,27</td><td class='num pos'>+20.9%</td></tr><tr><td class='num'>8</td><td>Ijuí</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>2</td><td class='clients'>CODIGO HOMEM, HINKELMANN MODA MASC.</td><td class='num'>R$ 140.477,12</td><td class='num'>–</td><td class='num'>R$ 183.044,52</td><td class='num neu'>—</td></tr><tr><td class='num'>9</td><td>Dois Irmãos</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>1</td><td class='clients'>ZR HOMEM</td><td class='num'>R$ 103.031,36</td><td class='num'>R$ 2.848,50</td><td class='num'>R$ 137.616,25</td><td class='num pos'>+4731.2%</td></tr><tr><td class='num'>10</td><td>Venâncio Aires</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>3</td><td class='clients'>BILD ESTILO HOMEM, DOMO, FORMOSA MODA E ACESS.</td><td class='num'>R$ 37.506,69</td><td class='num'>R$ 49.939,63</td><td class='num'>R$ 121.475,47</td><td class='num pos'>+143.2%</td></tr><tr><td class='num'>11</td><td>Torres</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>1</td><td class='clients'>MUNDO HOMEM</td><td class='num'>R$ 62.714,84</td><td class='num'>R$ 71.485,98</td><td class='num'>R$ 106.320,29</td><td class='num pos'>+48.7%</td></tr><tr><td class='num'>12</td><td>Nova Prata</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>2</td><td class='clients'>DON JUAN, JULIO LUIS</td><td class='num'>R$ 38.699,52</td><td class='num'>R$ 108.614,47</td><td class='num'>R$ 95.000,56</td><td class='num neg'>-12.5%</td></tr><tr><td class='num'>13</td><td>Arroio do Sal</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>1</td><td class='clients'>ELETROMAR - 122</td><td class='num'>R$ 68.895,28</td><td class='num'>R$ 55.597,87</td><td class='num'>R$ 94.859,25</td><td class='num pos'>+70.6%</td></tr><tr><td class='num'>14</td><td>Gravataí</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>1</td><td class='clients'>RSM CONF - 1451</td><td class='num'>R$ 58.516,66</td><td class='num'>R$ 24.534,79</td><td class='num'>R$ 94.798,05</td><td class='num pos'>+286.4%</td></tr><tr><td class='num'>15</td><td>Marau</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>2</td><td class='clients'>FRANCO PRODOSSIMO, JOAO E MARIA RS</td><td class='num'>R$ 24.778,17</td><td class='num'>R$ 156.567,54</td><td class='num'>R$ 91.524,23</td><td class='num neg'>-41.5%</td></tr><tr><td class='num'>16</td><td>Bento Gonçalves</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>2</td><td class='clients'>CADORO, MILAN MODAS</td><td class='num'>R$ 51.263,38</td><td class='num'>R$ 80.655,33</td><td class='num'>R$ 90.045,15</td><td class='num pos'>+11.6%</td></tr><tr><td class='num'>17</td><td>Camaquã</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>1</td><td class='clients'>MODA HOMEM</td><td class='num'>R$ 45.859,27</td><td class='num'>R$ 54.746,90</td><td class='num'>R$ 82.241,09</td><td class='num pos'>+50.2%</td></tr><tr><td class='num'>18</td><td>Cachoeira do Sul</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>2</td><td class='clients'>ANEXO STORE, GREMES E FURLANETO</td><td class='num'>R$ 14.873,87</td><td class='num'>R$ 43.066,85</td><td class='num'>R$ 80.590,33</td><td class='num pos'>+87.1%</td></tr><tr><td class='num'>19</td><td>Constantina</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>1</td><td class='clients'>MARATHON ARTIGOS ESPORT.</td><td class='num'>–</td><td class='num'>R$ 60.353,27</td><td class='num'>R$ 80.450,99</td><td class='num pos'>+33.3%</td></tr><tr><td class='num'>20</td><td>Canela</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>1</td><td class='clients'>EDUARDO PORT</td><td class='num'>R$ 56.913,22</td><td class='num'>–</td><td class='num'>R$ 77.109,09</td><td class='num neu'>—</td></tr><tr><td class='num'>21</td><td>Palmeira das Missões</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>1</td><td class='clients'>ROMULO D DE CEZARO &amp; CIA</td><td class='num'>R$ 52.932,70</td><td class='num'>R$ 28.356,49</td><td class='num'>R$ 71.716,07</td><td class='num pos'>+152.9%</td></tr><tr><td class='num'>22</td><td>Frederico Westphalen</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>1</td><td class='clients'>ROMULO D DE CEZARO</td><td class='num'>R$ 48.319,76</td><td class='num'>R$ 29.920,74</td><td class='num'>R$ 65.466,21</td><td class='num pos'>+118.8%</td></tr><tr><td class='num'>23</td><td>Capão da Canoa</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>1</td><td class='clients'>DON JUAN CAPAO</td><td class='num'>R$ 43.229,23</td><td class='num'>R$ 19.061,94</td><td class='num'>R$ 65.193,69</td><td class='num pos'>+242.0%</td></tr><tr><td class='num'>24</td><td>Santa Rosa</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>2</td><td class='clients'>ACALANTO KIDS, EXCLUSIVA MODAS</td><td class='num'>R$ 38.183,98</td><td class='num'>R$ 30.709,45</td><td class='num'>R$ 51.242,17</td><td class='num pos'>+66.9%</td></tr><tr><td class='num'>25</td><td>Montenegro</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>1</td><td class='clients'>DON JUAN RS</td><td class='num'>R$ 28.886,79</td><td class='num'>R$ 21.466,11</td><td class='num'>R$ 48.578,63</td><td class='num pos'>+126.3%</td></tr><tr><td class='num'>26</td><td>Gramado</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>1</td><td class='clients'>MARCO ANTONIO RS</td><td class='num'>R$ 33.006,26</td><td class='num'>–</td><td class='num'>R$ 47.769,26</td><td class='num neu'>—</td></tr><tr><td class='num'>27</td><td>Tio Hugo</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>1</td><td class='clients'>ALLURE RS</td><td class='num'>–</td><td class='num'>R$ 30.762,73</td><td class='num'>R$ 45.000,00</td><td class='num pos'>+46.3%</td></tr><tr><td class='num'>28</td><td>Carazinho</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>1</td><td class='clients'>HORTENCIO MODA</td><td class='num'>R$ 31.131,27</td><td class='num'>R$ 34.457,46</td><td class='num'>R$ 44.907,66</td><td class='num pos'>+30.3%</td></tr><tr><td class='num'>29</td><td>Sta Cruz do Sul</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>1</td><td class='clients'>ADONIS - 732</td><td class='num'>R$ 30.457,05</td><td class='num'>R$ 39.237,42</td><td class='num'>R$ 44.373,49</td><td class='num pos'>+13.1%</td></tr><tr><td class='num'>30</td><td>Casca</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>1</td><td class='clients'>ALAEVA - 1265</td><td class='num'>R$ 30.009,67</td><td class='num'>R$ 21.381,51</td><td class='num'>R$ 42.626,07</td><td class='num pos'>+99.4%</td></tr><tr><td class='num'>31</td><td>Capivari do Sul</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>1</td><td class='clients'>EXCLUSIVA BY RAQUEL</td><td class='num'>R$ 27.598,98</td><td class='num'>–</td><td class='num'>R$ 39.201,90</td><td class='num neu'>—</td></tr><tr><td class='num'>32</td><td>Trindade do Sul</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>1</td><td class='clients'>MARYNA MODAS</td><td class='num'>R$ 27.523,80</td><td class='num'>–</td><td class='num'>R$ 39.095,11</td><td class='num neu'>—</td></tr><tr><td class='num'>33</td><td>Cruz Alta</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>1</td><td class='clients'>GARAGE STORE 994</td><td class='num'>–</td><td class='num'>R$ 26.907,05</td><td class='num'>R$ 36.455,12</td><td class='num pos'>+35.5%</td></tr><tr><td class='num'>34</td><td>Tapera</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>1</td><td class='clients'>LP MENSWEAR</td><td class='num'>R$ 24.699,45</td><td class='num'>R$ 18.496,59</td><td class='num'>R$ 35.083,38</td><td class='num pos'>+89.7%</td></tr><tr><td class='num'>35</td><td>Sapiranga</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>1</td><td class='clients'>DISPA</td><td class='num'>–</td><td class='num'>R$ 25.232,90</td><td class='num'>R$ 34.186,89</td><td class='num pos'>+35.5%</td></tr><tr><td class='num'>36</td><td>Osório</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>1</td><td class='clients'>COTIDIANO CONFECCOES</td><td class='num'>R$ 20.028,25</td><td class='num'>R$ 25.943,31</td><td class='num'>R$ 33.358,32</td><td class='num pos'>+28.6%</td></tr><tr><td class='num'>37</td><td>Santo Ângelo</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>1</td><td class='clients'>ECLIPSE MODA JOVEM</td><td class='num'>R$ 22.706,15</td><td class='num'>–</td><td class='num'>R$ 32.252,07</td><td class='num neu'>—</td></tr><tr><td class='num'>38</td><td>Guaíba</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>1</td><td class='clients'>ELLITE MODA MASCULINA</td><td class='num'>–</td><td class='num'>R$ 22.992,86</td><td class='num'>R$ 31.151,96</td><td class='num pos'>+35.5%</td></tr><tr><td class='num'>39</td><td>Tramandaí</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>1</td><td class='clients'>PAULO GETULIO</td><td class='num'>R$ 21.349,75</td><td class='num'>R$ 13.814,72</td><td class='num'>R$ 30.325,42</td><td class='num pos'>+119.5%</td></tr><tr><td class='num'>40</td><td>Ronda Alta</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>1</td><td class='clients'>PASSARELLA MODAS</td><td class='num'>R$ 17.275,84</td><td class='num'>R$ 24.529,29</td><td class='num'>R$ 29.166,14</td><td class='num pos'>+18.9%</td></tr><tr><td class='num'>41</td><td>Candelária</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>1</td><td class='clients'>DORY VAZ RIBEIRO</td><td class='num'>R$ 16.448,69</td><td class='num'>–</td><td class='num'>R$ 23.363,90</td><td class='num neu'>—</td></tr><tr><td class='num'>42</td><td>São Luiz Gonzaga</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>1</td><td class='clients'>amis kids</td><td class='num'>R$ 15.948,46</td><td class='num'>–</td><td class='num'>R$ 22.653,37</td><td class='num neu'>—</td></tr><tr><td class='num'>43</td><td>Farroupilha</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>1</td><td class='clients'>ALL MEN</td><td class='num'>–</td><td class='num'>R$ 15.019,33</td><td class='num'>R$ 21.790,90</td><td class='num pos'>+45.1%</td></tr><tr><td class='num'>44</td><td>Santiago</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>2</td><td class='clients'>BOLACELL, HANGAR 88</td><td class='num'>R$ 15.289,74</td><td class='num'>R$ 35.980,94</td><td class='num'>R$ 21.717,72</td><td class='num neg'>-39.6%</td></tr><tr><td class='num'>45</td><td>Alegrete</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>1</td><td class='clients'>BOUTIQUE 110</td><td class='num'>R$ 7.004,19</td><td class='num'>R$ 40.241,18</td><td class='num'>R$ 20.839,11</td><td class='num neg'>-48.2%</td></tr><tr><td class='num'>46</td><td>Cachoeirinha</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>1</td><td class='clients'>IOC X STORE COMERCIO</td><td class='num'>R$ 13.854,44</td><td class='num'>–</td><td class='num'>R$ 19.679,00</td><td class='num neu'>—</td></tr><tr><td class='num'>47</td><td>Caçapava do Sul</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>1</td><td class='clients'>IMPACTO MODA HOMEM</td><td class='num'>R$ 13.500,55</td><td class='num'>R$ 10.913,08</td><td class='num'>R$ 19.176,33</td><td class='num pos'>+75.7%</td></tr><tr><td class='num'>48</td><td>Bagé</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>1</td><td class='clients'>PODIUM MODA HOMEM</td><td class='num'>R$ 11.126,49</td><td class='num'>R$ 10.958,70</td><td class='num'>R$ 18.000,00</td><td class='num pos'>+64.3%</td></tr><tr><td class='num'>49</td><td>São Sepé</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>1</td><td class='clients'>IMPACTO MODA</td><td class='num'>R$ 10.746,43</td><td class='num'>R$ 6.785,34</td><td class='num'>R$ 15.264,35</td><td class='num pos'>+125.0%</td></tr><tr><td class='num'>50</td><td>Barros Cassal</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>1</td><td class='clients'>FREE STYLE</td><td class='num'>R$ 7.974,01</td><td class='num'>R$ 14.529,60</td><td class='num'>R$ 11.326,37</td><td class='num neg'>-22.0%</td></tr><tr><td class='num'>51</td><td>Teutônia</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>1</td><td class='clients'>DELAI O CENTRO DA MODA</td><td class='num'>R$ 7.418,93</td><td class='num'>–</td><td class='num'>R$ 10.537,93</td><td class='num neu'>—</td></tr><tr><td class='num'>52</td><td>Taquara</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>1</td><td class='clients'>KAMAJO</td><td class='num'>R$ 6.235,43</td><td class='num'>–</td><td class='num'>R$ 10.000,00</td><td class='num neu'>—</td></tr><tr><td class='num'>53</td><td>Crissiumal</td><td><span class="badge badge-ativa">Ativa</span></td><td class='num'>1</td><td class='clients'>JU E JU MODAS</td><td class='num'>R$ 5.889,52</td><td class='num'>–</td><td class='num'>R$ 8.365,54</td><td class='num neu'>—</td></tr><tr><td class='num'>54</td><td>Barão de Cotegipe</td><td><span class="badge badge-dormente">Dormente</span></td><td class='num'>1</td><td class='clients'>PINGO BLUE</td><td class='num'>–</td><td class='num'>–</td><td class='num'>–</td><td class='num neu'>—</td></tr><tr class='total-row'><td></td><td>TOTAL (54 cidades)</td><td></td><td></td><td></td><td class='num'>R$ 2.578.556,85</td><td class='num'>R$ 3.343.368,25</td><td class='num'>R$ 4.881.226,87</td><td></td></tr></tbody>
-      </table>
-    </div>
-  </section>
-
-  <hr class="section-divider">
-
-  <section id="reativacao">
-    <div class="section-title">⚠ Plano de Reativação — Clientes sem Compra na Coleção 118</div>
-    <div class="section-note">Clientes com histórico de compras nas Coleções 116/117 que NÃO compraram na Coleção 118 — prioridade de contato.</div>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Cliente</th><th>Cidade</th><th>Fat. Col. 116 (R$)</th><th>Fat. Col. 117 (R$)</th><th>Col. 118</th><th>Ação Recomendada</th></tr></thead>
-        <tbody><tr><td>JOAO E MARIA RS</td><td>Marau</td><td class='num'>R$ 7.488,62</td><td class='num'>R$ 7.194,20</td><td><span class='badge badge-dormente'>Sem compra</span></td><td class='action'>Contato prioritário — resgatar pedido Col. 119</td></tr><tr><td>NUVEEM DE AMOR</td><td>Passo Fundo</td><td class='num'>R$ 3.102,77</td><td class='num'>–</td><td><span class='badge badge-dormente'>Sem compra</span></td><td class='action'>Contato prioritário — resgatar pedido Col. 119</td></tr></tbody>
-      </table>
-    </div>
-
-    <div class="section-title">Clientes Dormentes — Cadastrados sem Nenhuma Compra Registrada</div>
-    <div class="section-note">Clientes sem qualquer histórico de compra — alvo de prospecção.</div>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Cliente</th><th>Cidade</th><th>Situação</th><th>Ação Recomendada</th></tr></thead>
-        <tbody><tr><td>HANGAR 88</td><td>Santiago</td><td><span class='badge badge-dormente'>Sem histórico</span></td><td class='action'>Prospectar — verificar interesse Col. 119</td></tr><tr><td>PINGO BLUE</td><td>Barão de Cotegipe</td><td><span class='badge badge-dormente'>Sem histórico</span></td><td class='action'>Prospectar — verificar interesse Col. 119</td></tr></tbody>
-      </table>
-    </div>
-  </section>
-
-  <hr class="section-divider">
-
-  <section id="expansao">
-    <div class="section-title">Oportunidades de Expansão — Cidades do RS sem Representação</div>
-    <div class="section-note">Municípios gaúchos com potencial de mercado ainda não atendidos, ordenados por potencial estimado.</div>
-    <div class="flex-tables">
-      <div class="table-wrap" style="flex:3;">
-        <table>
-          <thead><tr><th>Cidade</th><th>Região</th><th>Hab. Estimados</th><th>Potencial</th><th>Justificativa / Estratégia</th></tr></thead>
-          <tbody><tr><td>Canoas</td><td>Grande POA</td><td class='num'>340.000</td><td><span class="badge badge-alto">Alto</span></td><td class='just'>Maior cidade do RS sem representação. Alta concentração de lojas masculinas.</td></tr><tr><td>Santa Maria</td><td>Centro do RS</td><td class='num'>280.000</td><td><span class="badge badge-alto">Alto</span></td><td class='just'>Centro universitário. Moda masculina em crescimento acelerado.</td></tr><tr><td>Novo Hamburgo</td><td>Vale dos Sinos</td><td class='num'>240.000</td><td><span class="badge badge-alto">Alto</span></td><td class='just'>Polo calçadista. Público masculino qualificado e consumidor de moda.</td></tr><tr><td>São Leopoldo</td><td>Vale dos Sinos</td><td class='num'>220.000</td><td><span class="badge badge-alto">Alto</span></td><td class='just'>Próxima a clientes ativos em Dois Irmãos e Sapiranga.</td></tr><tr><td>Viamão</td><td>Grande POA</td><td class='num'>250.000</td><td><span class="badge badge-medio">Médio</span></td><td class='just'>Cidade dormitório com crescente polo de consumo próprio.</td></tr><tr><td>Rio Grande</td><td>Sul do RS</td><td class='num'>200.000</td><td><span class="badge badge-medio">Médio</span></td><td class='just'>Porto importante, comércio ativo, público masculino estável.</td></tr><tr><td>Alvorada</td><td>Grande POA</td><td class='num'>190.000</td><td><span class="badge badge-medio">Médio</span></td><td class='just'>Adjacente à capital. Varejo masculino em expansão.</td></tr><tr><td>Uruguaiana</td><td>Fronteira Oeste</td><td class='num'>125.000</td><td><span class="badge badge-medio">Médio</span></td><td class='just'>Comércio de fronteira com Argentina. Alta circulação.</td></tr><tr><td>Santana do Livramento</td><td>Fronteira Oeste</td><td class='num'>80.000</td><td><span class="badge badge-medio">Médio</span></td><td class='just'>Comércio de fronteira com Uruguai. Alta movimentação.</td></tr><tr><td>Vacaria</td><td>Serra do RS</td><td class='num'>70.000</td><td><span class="badge badge-medio">Médio</span></td><td class='just'>Região serrana, próxima a Caxias do Sul e Canela.</td></tr><tr><td>Encantado</td><td>Vale do Taquari</td><td class='num'>22.000</td><td><span class="badge badge-medio">Médio</span></td><td class='just'>Próxima a Lajeado (principal hub). Potencial de expansão natural.</td></tr><tr><td>São Gabriel</td><td>Sul do RS</td><td class='num'>60.000</td><td><span class="badge badge-baixo">Baixo</span></td><td class='just'>Interior, mercado menor mas sem concorrência no segmento.</td></tr><tr><td>Canguçu</td><td>Sul do RS</td><td class='num'>55.000</td><td><span class="badge badge-baixo">Baixo</span></td><td class='just'>Região rural. Potencial de um cliente estratégico.</td></tr><tr><td>Santo Antônio da Patrulha</td><td>Litoral</td><td class='num'>45.000</td><td><span class="badge badge-baixo">Baixo</span></td><td class='just'>Corredor litoral norte. Público sazonal + local.</td></tr></tbody>
-        </table>
-      </div>
-      <div class="table-wrap" style="flex:1; min-width:240px;">
-        <table>
-          <thead><tr><th>Potencial</th><th>Nº Cidades</th><th>Hab. Estimados</th></tr></thead>
-          <tbody><tr><td><span class="badge badge-alto">Alto</span></td><td class='num'>4</td><td class='num'>1.080.000</td></tr><tr><td><span class="badge badge-medio">Médio</span></td><td class='num'>7</td><td class='num'>937.000</td></tr><tr><td><span class="badge badge-baixo">Baixo</span></td><td class='num'>3</td><td class='num'>160.000</td></tr><tr class='total-row'><td>TOTAL</td><td class='num'>14</td><td class='num'>2.177.000</td></tr></tbody>
-        </table>
+    <div class="card">
+      <h3>Status das Cidades</h3>
+      <div class="sub">Distribuição por categoria</div>
+      <div class="chart-h240"><canvas id="cStatus"></canvas></div>
+      <div style="margin-top:16px">
+        <div class="card" style="background:#0f1117;border:none;padding:0">
+          <h3 style="font-size:.8rem;margin-bottom:10px;color:#e2e8f0">Crescimento 117→118 por cidade</h3>
+          <div class="chart-h240"><canvas id="cGrowth"></canvas></div>
+        </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-</main>
-<footer>Gerado a partir de Planejamento_Cidades_RS.xlsx · Underground Representações · Rio Grande do Sul</footer>
+<!-- TABLE -->
+<section>
+  <h2>Todas as Cidades Cadastradas</h2>
+  <div class="table-wrap">
+    <div class="tbl-controls">
+      <input type="text" id="srch" placeholder="🔍  Buscar cidade…" oninput="renderTable()">
+      <div class="filter-btns">
+        <button class="filter-btn active" id="btn-all" onclick="setFilter('all',this)">Todas</button>
+        <button class="filter-btn" id="btn-ativa" onclick="setFilter('ativa',this)" style="color:#43e97b">Ativas</button>
+        <button class="filter-btn" id="btn-reativacao" onclick="setFilter('reativacao',this)" style="color:#fa709a">Reativação</button>
+        <button class="filter-btn" id="btn-dormant" onclick="setFilter('dormant',this)" style="color:#718096">Dormentes</button>
+      </div>
+      <select class="sort-select" id="sortSel" onchange="renderTable()">
+        <option value="tot118_desc">Fat. 118 ↓</option>
+        <option value="tot117_desc">Fat. 117 ↓</option>
+        <option value="tot116_desc">Fat. 116 ↓</option>
+        <option value="delta_desc">Crescimento ↓</option>
+        <option value="nome_asc">Cidade A→Z</option>
+        <option value="nclientes_desc">Nº Clientes ↓</option>
+      </select>
+    </div>
+    <div style="overflow-x:auto">
+      <table>
+        <thead>
+          <tr>
+            <th>Cidade</th>
+            <th>Status</th>
+            <th class="num">Clientes</th>
+            <th class="num">Fat. 116</th>
+            <th class="num">Fat. 117</th>
+            <th class="num">Fat. 118</th>
+            <th class="num">Δ% 117→118</th>
+          </tr>
+        </thead>
+        <tbody id="tblBody"></tbody>
+      </table>
+    </div>
+    <div class="tbl-foot" id="tblFoot"></div>
+  </div>
+</section>
+
+<!-- REATIVAÇÃO -->
+<section>
+  <h2>Plano de Reativação — Clientes sem compra na Coleção 118</h2>
+  <div class="reat-grid" id="reatGrid"></div>
+</section>
+
+<!-- EXPANSÃO -->
+<section>
+  <h2>Oportunidades de Expansão — Cidades do RS sem representação</h2>
+  <p style="font-size:.78rem;color:#718096;margin-bottom:16px">Principais municípios gaúchos ainda não atendidos, ordenados por potencial estimado.</p>
+  <div class="exp-grid" id="expGrid"></div>
+</section>
+
+</div>
+
 <script>
-function filterCidades() {
-  var q = document.getElementById('cidadeSearch').value.toLowerCase();
-  document.querySelectorAll('#cidadesTable tbody tr').forEach(function(tr) {
-    if (tr.classList.contains('total-row')) return;
-    tr.style.display = tr.textContent.toLowerCase().includes(q) ? '' : 'none';
-  });
+// ── DATA ──────────────────────────────────────────────────────────────
+const CLIENTES = [
+  {nome:'ACALANTO KIDS',           cidade:'Santa Rosa',           a116:0,          a117:0,          a118:0,          u116:0,        u117:0,        u118:0,        n116:11074.81, n117:0,       n118:12736,   c117:0,        c118:0},
+  {nome:'ADONIS - 732',            cidade:'Sta Cruz do Sul',      a116:19565.05,   a117:26889.25,   a118:27790.42,   u116:10892,    u117:12348.17, u118:16583.07, n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'ALAEVA - 1265',           cidade:'Casca',                a116:30009.67,   a117:21381.51,   a118:42626.07,   u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'ALL MEN',                 cidade:'Farroupilha',          a116:0,          a117:12529.41,   a118:18000,      u116:0,        u117:2489.92,  u118:3790.90,  n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'ALLERTON',                cidade:'Erechim',              a116:29975.56,   a117:46011.15,   a118:42577.62,   u116:8275.69,  u117:0,        u118:12599.74, n116:0,        n117:0,       n118:0,       c117:5688.67,  c118:9051.81},
+  {nome:'ALLURE RS',               cidade:'Tio Hugo',             a116:0,          a117:30762.73,   a118:45000,      u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'ANDREOLLY',               cidade:'Lajeado',              a116:11608.57,   a117:0,          a118:16488.94,   u116:15311.05, u117:0,        u118:21757,    n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'ANEXO STORE',             cidade:'Cachoeira do Sul',     a116:0,          a117:38353.25,   a118:51963.04,   u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'ANGELICA DACAMPO',        cidade:'Erechim',              a116:63502.22,   a117:22606.36,   a118:86036.22,   u116:10456.06, u117:1316.22,  u118:15919.35, n116:0,        n117:0,       n118:0,       c117:9351.30,  c118:13887.80},
+  {nome:'ANTONIO AUGUSTO-235',     cidade:'Pelotas',              a116:68049.25,   a117:37533.57,   a118:92196.78,   u116:0,        u117:12446.51, u118:17054.83, n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'ARCADME POA',             cidade:'Porto Alegre',         a116:30034.73,   a117:11521.61,   a118:42661.67,   u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'amis kids',               cidade:'São Luiz Gonzaga',     a116:15948.46,   a117:0,          a118:22653.37,   u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'BILD ESTILO HOMEM',       cidade:'Venâncio Aires',       a116:0,          a117:0,          a118:0,          u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:21658.86, c118:28719.65},
+  {nome:'BOLACELL',                cidade:'Santiago',             a116:15289.74,   a117:35980.94,   a118:21717.72,   u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'BOUTIQUE 110',            cidade:'Alegrete',             a116:5876.92,    a117:29123.01,   a118:8347.64,    u116:1127.27,  u117:3862.73,  u118:1716.27,  n116:0,        n117:0,       n118:0,       c117:7255.44,  c118:10775.20},
+  {nome:'BRASCON COM. DE CONF',    cidade:'Pelotas',              a116:73648.03,   a117:100259.97,  a118:97368.22,   u116:5744.13,  u117:27890.35, u118:8745.44,  n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'CADORO',                  cidade:'Bento Gonçalves',      a116:0,          a117:0,          a118:0,          u116:34641.67, u117:37935.40, u118:43951.62, n116:0,        n117:0,       n118:0,       c117:4872.75,  c118:7753.52},
+  {nome:'CAMISARIA LAJEADO',       cidade:'Lajeado',              a116:2249.58,    a117:0,          a118:3195.33,    u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'CARNEZELA BOUTIQUE',      cidade:'Caxias do Sul',        a116:70913.83,   a117:55495.81,   a118:93753.40,   u116:438.84,   u117:8261.22,  u118:12577.71, n116:0,        n117:0,       n118:0,       c117:25122.19, c118:33312.02},
+  {nome:'CODIGO HOMEM',            cidade:'Ijuí',                 a116:14703.85,   a117:0,          a118:20885.51,   u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'COMPANY HOMEM',           cidade:'Porto Alegre',         a116:0,          a117:18635.93,   a118:25248.96,   u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'COTIDIANO CONFECCOES',    cidade:'Osório',               a116:20028.25,   a117:22718.37,   a118:28448.35,   u116:0,        u117:3224.94,  u118:4909.97,  n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'D HOMEM MODA MASCULINA',  cidade:'Caxias do Sul',        a116:30630.83,   a117:67113.32,   a118:43508.37,   u116:6227.38,  u117:13767.05, u118:9481.19,  n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'DELAI O CENTRO DA MODA',  cidade:'Teutônia',             a116:7418.93,    a117:0,          a118:10537.93,   u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'DISPA',                   cidade:'Sapiranga',            a116:0,          a117:25232.90,   a118:34186.89,   u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'DOMO',                    cidade:'Venâncio Aires',       a116:0,          a117:21402.88,   a118:28997.77,   u116:0,        u117:6877.89,  u118:10471.59, n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'DON JUAN',                cidade:'Nova Prata',           a116:14392.03,   a117:80212.69,   a118:20442.60,   u116:0,        u117:23360.88, u118:32010.25, n116:0,        n117:0,       n118:0,       c117:5040.90,  c118:8021.08},
+  {nome:'DON JUAN CAPAO',          cidade:'Capão da Canoa',       a116:37528.46,   a117:17045.58,   a118:53305.84,   u116:5700.77,  u117:0,        u118:8679.42,  n116:0,        n117:0,       n118:0,       c117:2016.36,  c118:3208.43},
+  {nome:'DON JUAN LAJEADO',        cidade:'Lajeado',              a116:0,          a117:8708.60,    a118:15000,      u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:2122.48,  c118:3377.29},
+  {nome:'DON JUAN RS',             cidade:'Montenegro',           a116:28886.79,   a117:16599.78,   a118:41031.12,   u116:0,        u117:2849.97,  u118:4339.08,  n116:0,        n117:0,       n118:0,       c117:2016.36,  c118:3208.43},
+  {nome:'DORY VAZ RIBEIRO',        cidade:'Candelária',           a116:16448.69,   a117:0,          a118:23363.90,   u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'DULLIUS',                 cidade:'Cruzeiro do Sul',      a116:0,          a117:196289.34,  a118:240206.90,  u116:28901.89, u117:0,        u118:39602.81, n116:0,        n117:0,       n118:0,       c117:27044.58, c118:35861.11},
+  {nome:'ECLIPSE MODA JOVEM',      cidade:'Santo Ângelo',         a116:22706.15,   a117:0,          a118:32252.07,   u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'EDUARDO PORT',            cidade:'Canela',               a116:56913.22,   a117:0,          a118:77109.09,   u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'ELEMENTO FOR MEN',        cidade:'Porto Alegre',         a116:18753.12,   a117:0,          a118:26637.14,   u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'ELETROMAR - 122',         cidade:'Arroio do Sal',        a116:59851.09,   a117:55597.87,   a118:81089.47,   u116:9044.19,  u117:0,        u118:13769.78, n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'ELLITE MODA MASCULINA',   cidade:'Guaíba',               a116:0,          a117:22992.86,   a118:31151.96,   u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'EXCLUSIVA BY RAQUEL',     cidade:'Capivari do Sul',      a116:27598.98,   a117:0,          a118:39201.90,   u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'EXCLUSIVA MODAS',         cidade:'Santa Rosa',           a116:27109.17,   a117:30709.45,   a118:38506.17,   u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'FERRARO',                 cidade:'Caxias do Sul',        a116:31200.81,   a117:48377.17,   a118:44317.98,   u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:6832.18,  c118:10146.61},
+  {nome:'FORMOSA MODA E ACESS.',   cidade:'Venâncio Aires',       a116:17923.25,   a117:0,          a118:25458.39,   u116:19583.44, u117:0,        u118:27828.07, n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'FRANCO PRODOSSIMO',       cidade:'Marau',                a116:17289.55,   a117:99697.59,   a118:24558.27,   u116:0,        u117:24766.63, u118:33936.47, n116:0,        n117:0,       n118:0,       c117:24909.12, c118:33029.49},
+  {nome:'FREE STYLE',              cidade:'Barros Cassal',        a116:7974.01,    a117:14529.60,   a118:11326.37,   u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'GARAGE STORE 994',        cidade:'Cruz Alta',            a116:0,          a117:26907.05,   a118:36455.12,   u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'GREMES E FURLANETO',      cidade:'Cachoeira do Sul',     a116:14873.87,   a117:0,          a118:21127.01,   u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:4713.60,  c118:7500.28},
+  {nome:'HANGAR 88',               cidade:'Santiago',             a116:0,          a117:0,          a118:0,          u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'HINKELMANN MODA MASC.',   cidade:'Ijuí',                 a116:125773.27,  a117:0,          a118:162159.01,  u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'HOLLY STORE HOMEM',       cidade:'Lajeado',              a116:32948.39,   a117:30226.02,   a118:46800.26,   u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'HORTENCIO MODA',          cidade:'Carazinho',            a116:24387.64,   a117:23218.07,   a118:34640.48,   u116:6743.63,  u117:11239.39, u118:10267.18, n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'IMPACTO MODA',            cidade:'São Sepé',             a116:10746.43,   a117:6785.34,    a118:15264.35,   u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'IMPACTO MODA HOMEM',      cidade:'Caçapava do Sul',      a116:13500.55,   a117:10913.08,   a118:19176.33,   u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'INDUSTRIA BRAS',          cidade:'Caxias do Sul',        a116:65859.33,   a117:105388.38,  a118:89229.76,   u116:15219.64, u117:17245.15, u118:21627.11, n116:0,        n117:0,       n118:0,       c117:16478.80, c118:23598.96},
+  {nome:'IOC X STORE COMERCIO',    cidade:'Cachoeirinha',         a116:13854.44,   a117:0,          a118:19679,      u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'ISO & POSTAL',            cidade:'Lajeado',              a116:34240.57,   a117:28202.25,   a118:48635.69,   u116:0,        u117:8245.23,  u118:12553.36, n116:0,        n117:0,       n118:0,       c117:9272.10,  c118:13770.18},
+  {nome:'JOAO E MARIA RS',         cidade:'Marau',                a116:0,          a117:0,          a118:0,          u116:0,        u117:0,        u118:0,        n116:7488.62,  n117:7194.20, n118:0,       c117:0,        c118:0},
+  {nome:'JU E JU MODAS',           cidade:'Crissiumal',           a116:5889.52,    a117:0,          a118:8365.54,    u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'JULIO LUIS',              cidade:'Nova Prata',           a116:24307.49,   a117:0,          a118:34526.63,   u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'KAKA',                    cidade:'Passo Fundo',          a116:256515.64,  a117:318395.20,  a118:322316.42,  u116:60971.24, u117:58897.17, u118:80451.55, n116:0,        n117:0,       n118:0,       c117:62723.97, c118:76774.14},
+  {nome:'KAMAJO',                  cidade:'Taquara',              a116:6235.43,    a117:0,          a118:10000,      u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'LDC',                     cidade:'Porto Alegre',         a116:19436.32,   a117:82944.67,   a118:27607.57,   u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'LOJAS FERRARO',           cidade:'Caxias do Sul',        a116:31788.62,   a117:56332.79,   a118:45152.91,   u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:7163.84,  c118:10639.16},
+  {nome:'LOJAS MAGNABOSCO',        cidade:'Caxias do Sul',        a116:47667.88,   a117:91009.54,   a118:64583.01,   u116:24252.90, u117:28618.54, u118:34463.37, n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'LORENCI HOMEM LTDA',      cidade:'Erechim',              a116:0,          a117:47884.92,   a118:63830.66,   u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:15181.72, c118:21741.44},
+  {nome:'LP MENSWEAR',             cidade:'Tapera',               a116:24699.45,   a117:18496.59,   a118:35083.38,   u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'MARATHON ARTIGOS ESPORT.',cidade:'Constantina',          a116:0,          a117:60353.27,   a118:80450.99,   u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'MARCO ANTONIO RS',        cidade:'Gramado',              a116:24319.69,   a117:0,          a118:34543.96,   u116:8686.57,  u117:0,        u118:13225.30, n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'MARYNA MODAS',            cidade:'Trindade do Sul',      a116:27523.80,   a117:0,          a118:39095.11,   u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'MILAN MODAS',             cidade:'Bento Gonçalves',      a116:16621.71,   a117:27561.20,   a118:23609.66,   u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:10285.98, c118:14730.35},
+  {nome:'MODA HOMEM',              cidade:'Camaquã',              a116:45859.27,   a117:40705.44,   a118:62132.60,   u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:14041.46, c118:20108.49},
+  {nome:'MUNDO HOMEM',             cidade:'Torres',               a116:62714.84,   a117:56577,      a118:84969.44,   u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:14908.98, c118:21350.85},
+  {nome:'NUVEEM DE AMOR',          cidade:'Passo Fundo',          a116:0,          a117:0,          a118:0,          u116:0,        u117:0,        u118:0,        n116:3102.77,  n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'OLLEV 52',                cidade:'Caxias do Sul',        a116:46209.23,   a117:122619.25,  a118:62606.75,   u116:19852.16, u117:61865.08, u118:28209.92, n116:0,        n117:0,       n118:0,       c117:49838.39, c118:63543.95},
+  {nome:'PASSARELLA MODAS',        cidade:'Ronda Alta',           a116:17275.84,   a117:21621.21,   a118:24538.80,   u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:2908.08,  c118:4627.34},
+  {nome:'PAULO GETULIO',           cidade:'Tramandaí',            a116:21349.75,   a117:13814.72,   a118:30325.42,   u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'PAULO RICARDO BONA',      cidade:'Porto Alegre',         a116:39947.58,   a117:53108.96,   a118:56741.99,   u116:0,        u117:22978.31, u118:31486.03, n116:0,        n117:0,       n118:0,       c117:15832.22, c118:22673.01},
+  {nome:'PINGO BLUE',              cidade:'Barão de Cotegipe',    a116:0,          a117:0,          a118:0,          u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'PODIUM MODA HOMEM',       cidade:'Bagé',                 a116:11126.49,   a117:10958.70,   a118:18000,      u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'PROFIT COMERCIO CONFEC',  cidade:'Lajeado',              a116:42317.82,   a117:11753.03,   a118:57334.46,   u116:0,        u117:12657.27, u118:17343.62, n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'ROMULO D DE CEZARO',      cidade:'Frederico Westphalen', a116:48319.76,   a117:29920.74,   a118:65466.21,   u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'ROMULO D DE CEZARO & CIA',cidade:'Palmeira das Missões', a116:52932.70,   a117:28356.49,   a118:71716.07,   u116:0,        u117:0,        u118:0,        n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+  {nome:'RSM CONF - 1451',         cidade:'Gravataí',             a116:54348.63,   a117:8442.85,    a118:73634.45,   u116:4168.03,  u117:5744.91,  u118:6345.83,  n116:0,        n117:0,       n118:0,       c117:10347.03, c118:14817.77},
+  {nome:'ZR HOMEM',                cidade:'Dois Irmãos',          a116:88868.54,   a117:2848.50,    a118:117490.88,  u116:14162.82, u117:0,        u118:20125.37, n116:0,        n117:0,       n118:0,       c117:0,        c118:0},
+];
+
+// ── CITY AGGREGATION ──
+const citiesMap = {};
+CLIENTES.forEach(c => {
+  if (!citiesMap[c.cidade]) citiesMap[c.cidade] = {cidade:c.cidade, clientes:[], tot116:0, tot117:0, tot118:0};
+  const city = citiesMap[c.cidade];
+  city.clientes.push(c.nome);
+  city.tot116 += c.a116 + c.u116 + (c.n116||0);
+  city.tot117 += c.a117 + c.u117 + (c.n117||0) + (c.c117||0);
+  city.tot118 += c.a118 + c.u118 + (c.n118||0) + (c.c118||0);
+});
+
+const CITIES = Object.values(citiesMap).map(city => {
+  const hasHistory = city.tot116 > 0 || city.tot117 > 0;
+  const status = city.tot118 > 0 ? 'ativa' : (hasHistory ? 'reativacao' : 'dormant');
+  const delta = city.tot117 > 0 ? ((city.tot118 - city.tot117) / city.tot117 * 100) : null;
+  return {...city, status, delta};
+}).sort((a,b) => b.tot118 - a.tot118);
+
+// Dormant clients (for reativação section — clients with history but no 118)
+const dormantClients = CLIENTES.filter(c => {
+  const tot118 = c.a118 + c.u118 + (c.n118||0) + (c.c118||0);
+  const history = c.a116 + c.a117 + c.u116 + c.u117 + (c.n116||0) + (c.n117||0) + (c.c117||0);
+  return tot118 === 0 && history > 0;
+});
+// Also truly dormant (no history at all)
+const neverBought = CLIENTES.filter(c => {
+  return (c.a116+c.a117+c.a118+c.u116+c.u117+c.u118+(c.n116||0)+(c.n117||0)+(c.n118||0)+(c.c117||0)+(c.c118||0)) === 0;
+});
+
+// Expansion cities
+const EXPANSAO = [
+  {cidade:'Canoas',               regiao:'Grande POA',      pop:340000, pot:'alto',  nota:'Maior cidade sem representação. Alta densidade de lojas masculinas.'},
+  {cidade:'Santa Maria',          regiao:'Centro do RS',    pop:280000, pot:'alto',  nota:'Centro universitário, moda masculina em crescimento.'},
+  {cidade:'Novo Hamburgo',        regiao:'Vale dos Sinos',  pop:240000, pot:'alto',  nota:'Polo calçadista — público masculino qualificado e consumidor.'},
+  {cidade:'São Leopoldo',         regiao:'Vale dos Sinos',  pop:220000, pot:'alto',  nota:'Próxima a clientes ativos em Dois Irmãos e Sapiranga.'},
+  {cidade:'Rio Grande',           regiao:'Sul do RS',       pop:200000, pot:'medio', nota:'Porto importante, comércio ativo, público masculino estável.'},
+  {cidade:'Alvorada',             regiao:'Grande POA',      pop:190000, pot:'medio', nota:'Adjacente à capital. Varejo masculino em expansão.'},
+  {cidade:'Viamão',               regiao:'Grande POA',      pop:250000, pot:'medio', nota:'Cidade dormitório com crescente polo de consumo próprio.'},
+  {cidade:'Uruguaiana',           regiao:'Fronteira Oeste', pop:125000, pot:'medio', nota:'Comércio de fronteira, boa circulação de mercadoria.'},
+  {cidade:'Santana do Livramento',regiao:'Fronteira Oeste', pop:80000,  pot:'medio', nota:'Comércio de fronteira com Uruguai. Alta movimentação.'},
+  {cidade:'Vacaria',              regiao:'Serra do RS',     pop:70000,  pot:'medio', nota:'Região serrana, próxima a clientes em Caxias do Sul e Canela.'},
+  {cidade:'Encantado',            regiao:'Vale do Taquari', pop:22000,  pot:'medio', nota:'Próxima a Lajeado (maior hub de clientes). Potencial de expansão.'},
+  {cidade:'Venâncio Aires',       regiao:'Vale do Rio Pardo',pop:72000, pot:'medio', nota:'Já temos clientes aqui (BILD/DOMO/FORMOSA). Alta receptividade.'},
+  {cidade:'São Gabriel',          regiao:'Sul do RS',       pop:60000,  pot:'baixo', nota:'Interior, mercado menor mas sem concorrência.'},
+  {cidade:'Canguçu',              regiao:'Sul do RS',       pop:55000,  pot:'baixo', nota:'Região rural. Potencial de um cliente estratégico.'},
+];
+
+// ── UTILS ──
+const R = v => v>0 ? 'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0}) : '–';
+const ticks = {color:'#718096'};
+const grid  = {color:'#2d3748'};
+const moneyFmt = v => 'R$ '+v.toLocaleString('pt-BR',{maximumFractionDigits:0});
+
+// ── KPI CARDS ──
+const nAtiva      = CITIES.filter(c=>c.status==='ativa').length;
+const nReat       = CITIES.filter(c=>c.status==='reativacao').length;
+const nDormant    = CITIES.filter(c=>c.status==='dormant').length;
+const nDormClients= dormantClients.length;
+const kpis = [
+  {cls:'green', label:'Cidades Ativas',          val:nAtiva,       sub:'compraram na Coleção 118', big:true},
+  {cls:'orange',label:'Cidades p/ Reativar',     val:nReat,        sub:'tinham histórico, sem 118',big:true},
+  {cls:'gray',  label:'Cidades Dormentes',        val:nDormant,     sub:'sem histórico de compras', big:true},
+  {cls:'teal',  label:'Clientes p/ Reativar',     val:nDormClients, sub:'com hist. mas sem 118',    big:true},
+  {cls:'blue',  label:'Oport. de Expansão',       val:EXPANSAO.length, sub:'cidades sem representação', big:true},
+];
+document.getElementById('kpiGrid').innerHTML = kpis.map(k=>
+  `<div class="kpi-card ${k.cls}"><div class="kpi-label">${k.label}</div><div class="kpi-value">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`
+).join('');
+
+// ── CHARTS ──
+const top15 = [...CITIES].filter(c=>c.tot118>0).slice(0,15);
+new Chart(document.getElementById('cRanking'),{type:'bar',
+  data:{labels:top15.map(c=>c.cidade),datasets:[{label:'Fat. 118',data:top15.map(c=>c.tot118),backgroundColor:top15.map((_,i)=>`rgba(67,233,123,${0.95-i*0.04})`),borderColor:'#43e97b',borderWidth:1,borderRadius:4}]},
+  options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${moneyFmt(c.raw)}`}}},
+    scales:{x:{ticks:{...ticks,callback:moneyFmt},grid},y:{ticks:{...ticks,font:{size:10}},grid}}}
+});
+
+new Chart(document.getElementById('cStatus'),{type:'doughnut',
+  data:{labels:['Ativas','Reativação','Dormentes'],datasets:[{data:[nAtiva,nReat,nDormant],backgroundColor:['#43e97b','#fa709a','#4a5568'],borderColor:'#1a1f2e',borderWidth:3,hoverOffset:6}]},
+  options:{responsive:true,maintainAspectRatio:false,cutout:'60%',
+    plugins:{legend:{position:'bottom',labels:{color:'#a0aec0',font:{size:11},padding:10}},
+      tooltip:{callbacks:{label:c=>`${c.label}: ${c.raw} cidade(s)`}}}}
+});
+
+// Growth chart — top 10 with 117 history
+const withGrowth = CITIES.filter(c=>c.delta!==null).sort((a,b)=>b.delta-a.delta).slice(0,10);
+new Chart(document.getElementById('cGrowth'),{type:'bar',
+  data:{labels:withGrowth.map(c=>c.cidade),datasets:[{label:'Δ% 117→118',data:withGrowth.map(c=>c.delta),
+    backgroundColor:withGrowth.map(c=>c.delta>=0?'rgba(72,187,120,.75)':'rgba(245,101,101,.75)'),
+    borderColor:withGrowth.map(c=>c.delta>=0?'#48bb78':'#f56565'),borderWidth:1,borderRadius:4}]},
+  options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.raw>0?'+':''}${c.raw.toFixed(1)}%`}}},
+    scales:{x:{ticks:{...ticks,callback:v=>v+'%'},grid},y:{ticks:{...ticks,font:{size:9}},grid}}}
+});
+
+// ── TABLE ──
+let activeFilter = 'all';
+function setFilter(f,btn){
+  activeFilter=f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active','r-active','d-active'));
+  if(f==='all') btn.classList.add('active');
+  else if(f==='reativacao') btn.classList.add('r-active');
+  else if(f==='dormant') btn.classList.add('d-active');
+  else btn.classList.add('active');
+  renderTable();
 }
+function renderTable(){
+  const q = document.getElementById('srch').value.toLowerCase();
+  const sel = document.getElementById('sortSel').value;
+  const [sKey,sDir] = sel.split('_');
+  const dir = sDir==='asc'?1:-1;
+  let data = CITIES.filter(c=>{
+    if(q && !c.cidade.toLowerCase().includes(q)) return false;
+    if(activeFilter!=='all' && c.status!==activeFilter) return false;
+    return true;
+  });
+  data.sort((a,b)=>{
+    switch(sKey){
+      case 'tot118':   return dir*(b.tot118-a.tot118);
+      case 'tot117':   return dir*(b.tot117-a.tot117);
+      case 'tot116':   return dir*(b.tot116-a.tot116);
+      case 'delta':    return dir*((b.delta??-9999)-(a.delta??-9999));
+      case 'nclientes':return dir*(b.clientes.length-a.clientes.length);
+      case 'nome':     return dir*a.cidade.localeCompare(b.cidade,'pt-BR');
+      default: return 0;
+    }
+  });
+  const statusBadge = s=>{
+    const map={ativa:'● Ativa',reativacao:'↺ Reativação',dormant:'○ Dormente'};
+    return `<span class="status-badge ${s}">${map[s]}</span>`;
+  };
+  const deltaBadge = v=>{
+    if(v===null) return '<span style="color:#4a5568">–</span>';
+    const cls=v>0?'up':'down';
+    return `<span class="pct-badge ${cls}">${v>0?'+':''}${v.toFixed(1)}%</span>`;
+  };
+  document.getElementById('tblBody').innerHTML = data.map(c=>`
+    <tr>
+      <td><strong>${c.cidade}</strong><br><span style="font-size:.68rem;color:#4a5568">${c.clientes.join(', ').substring(0,60)}${c.clientes.join(', ').length>60?'…':''}</span></td>
+      <td>${statusBadge(c.status)}</td>
+      <td class="num" style="font-size:.72rem">${c.clientes.length}</td>
+      <td class="num" style="color:#718096">${R(c.tot116)}</td>
+      <td class="num" style="color:#a0aec0">${R(c.tot117)}</td>
+      <td class="num" style="color:#43e97b;font-weight:${c.tot118>0?700:400}">${R(c.tot118)}</td>
+      <td class="num">${deltaBadge(c.delta)}</td>
+    </tr>`).join('');
+  const tot = data.reduce((s,c)=>s+c.tot118,0);
+  document.getElementById('tblFoot').innerHTML=`${data.length} cidade(s) · Faturamento 118: <strong>${R(tot)}</strong>`;
+}
+renderTable();
+
+// ── REATIVAÇÃO ──
+const reatHTML = dormantClients.map(c=>{
+  const hist116 = c.a116+c.u116+(c.n116||0);
+  const hist117 = c.a117+c.u117+(c.n117||0)+(c.c117||0);
+  const marcas = [];
+  if(c.a116>0||c.a117>0) marcas.push('ARAMIS');
+  if(c.u116>0||c.u117>0) marcas.push('URBAN');
+  if((c.n116||0)>0||(c.n117||0)>0) marcas.push('NEXT');
+  if((c.c117||0)>0) marcas.push('CALÇADOS');
+  return `
+  <div class="reat-card">
+    <h4>${c.nome}</h4>
+    <div class="cidade">📍 ${c.cidade} · Marcas: ${marcas.join(', ')}</div>
+    <div class="reat-row"><span class="reat-label">Faturado Col. 116</span><span class="reat-val">${R(hist116)}</span></div>
+    <div class="reat-row"><span class="reat-label">Faturado Col. 117</span><span class="reat-val">${R(hist117)}</span></div>
+    <div class="reat-row"><span class="reat-label">Col. 118</span><span class="reat-val" style="color:#fc8181">Sem compra</span></div>
+  </div>`;
+}).join('');
+const neverHTML = neverBought.map(c=>`
+  <div class="reat-card" style="border-color:rgba(113,128,150,.3)">
+    <h4 style="color:#718096">${c.nome}</h4>
+    <div class="cidade">📍 ${c.cidade}</div>
+    <div class="reat-row"><span class="reat-label" style="color:#4a5568">Nenhuma compra registrada (116/117/118)</span></div>
+  </div>`).join('');
+document.getElementById('reatGrid').innerHTML = reatHTML + neverHTML;
+
+// ── EXPANSÃO ──
+document.getElementById('expGrid').innerHTML = EXPANSAO.map(e=>`
+  <div class="exp-card ${e.pot}">
+    <h4>${e.cidade}</h4>
+    <div class="regiao">📍 ${e.regiao} · ~${(e.pop/1000).toFixed(0)}k hab.</div>
+    <span class="exp-tag ${e.pot}">${e.pot==='alto'?'🟢 Alto potencial':e.pot==='medio'?'🟡 Médio potencial':'⚪ Baixo potencial'}</span>
+    <div class="exp-detail">${e.nota}</div>
+  </div>`).join('');
+
 </script>
 </body>
 </html>
